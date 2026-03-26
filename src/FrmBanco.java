@@ -19,17 +19,19 @@ import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
+import modelos.TipoCuenta;
+import servicios.CuentaServicio;
+
 public class FrmBanco extends JFrame {
 
-    public String[] encabezadosCuentas = new String[] { "Tipo", "Número", "Titular", "Saldo",
-            "Sobregiro o Límite" };
     public String[] encabezadosTransacciones = new String[] { "Cuenta", "Tipo", "ValorTransaccion", "Saldo" };
+
     private String[] opcionesTransaccion = new String[] { "Depósito", "Retiro" };
 
     private JTable tblCuentas, tblTransacciones;
     private JPanel pnlEditarCuenta, pnlEditarTransaccion;
-
-    private JTextField txtNumero, txtTitular, txtTasaInteres, txtValor, txtValorTransaccion, txtPlazo;
+    private JLabel lblValor, lblTasa, lblPlazo;
+    private JTextField txtNumero, txtTitular, txtTasa, txtValor, txtValorTransaccion, txtPlazo;
     private JComboBox cmbTipoCuenta, cmbTipoTransaccion, cmbCuenta;
 
     JTabbedPane tp;
@@ -92,22 +94,53 @@ public class FrmBanco extends JFrame {
         txtTitular.setBounds(110, 40, 100, 25);
         pnlEditarCuenta.add(txtTitular);
 
-        JLabel lblTasaInteres = new JLabel("Tasa de Interés");
-        lblTasaInteres.setBounds(10, 70, 100, 25);
-        pnlEditarCuenta.add(lblTasaInteres);
+        lblTasa = new JLabel("Tasa de Interés");
+        lblTasa.setBounds(10, 70, 100, 25);
+        pnlEditarCuenta.add(lblTasa);
 
-        txtTasaInteres = new JTextField();
-        txtTasaInteres.setBounds(110, 70, 100, 25);
-        pnlEditarCuenta.add(txtTasaInteres);
+        txtTasa = new JTextField();
+        txtTasa.setBounds(110, 70, 100, 25);
+        pnlEditarCuenta.add(txtTasa);
 
         cmbTipoCuenta = new JComboBox();
         cmbTipoCuenta.setBounds(220, 10, 100, 25);
-        String[] opciones = new String[] { "Ahorros", "Corriente", "Crédito" };
-        DefaultComboBoxModel mdlTipoCuenta = new DefaultComboBoxModel(opciones);
+
+        DefaultComboBoxModel mdlTipoCuenta = new DefaultComboBoxModel(TipoCuenta.values());
         cmbTipoCuenta.setModel(mdlTipoCuenta);
         pnlEditarCuenta.add(cmbTipoCuenta);
 
-        JLabel lblValor = new JLabel("Valor");
+        cmbTipoCuenta.addActionListener(e -> {
+            switch ((TipoCuenta) cmbTipoCuenta.getSelectedItem()) {
+                case AHORROS:
+                    lblValor.setVisible(false);
+                    txtValor.setVisible(false);
+                    lblTasa.setVisible(true);
+                    txtTasa.setVisible(true);
+                    lblPlazo.setVisible(false);
+                    txtPlazo.setVisible(false);
+                    break;
+                case CORRIENTE:
+                    lblValor.setVisible(true);
+                    lblValor.setText("Sobregiro:");
+                    txtValor.setVisible(true);
+                    lblTasa.setVisible(false);
+                    txtTasa.setVisible(false);
+                    lblPlazo.setVisible(false);
+                    txtPlazo.setVisible(false);
+                    break;
+                case CREDITO:
+                    lblValor.setVisible(true);
+                    lblValor.setText("Valor Prestado:");
+                    txtValor.setVisible(true);
+                    lblTasa.setVisible(true);
+                    txtTasa.setVisible(true);
+                    lblPlazo.setVisible(true);
+                    txtPlazo.setVisible(true);
+                    break;
+            }
+        });
+
+        lblValor = new JLabel("Valor");
         lblValor.setBounds(220, 40, 100, 25);
         lblValor.setVisible(false);
         pnlEditarCuenta.add(lblValor);
@@ -117,13 +150,13 @@ public class FrmBanco extends JFrame {
         txtValor.setVisible(false);
         pnlEditarCuenta.add(txtValor);
 
-        JLabel lblPlazo = new JLabel("Plazo");
-        lblPlazo.setBounds(220, 40, 100, 25);
+        lblPlazo = new JLabel("Plazo");
+        lblPlazo.setBounds(430, 40, 100, 25);
         lblPlazo.setVisible(false);
         pnlEditarCuenta.add(lblPlazo);
 
         txtPlazo = new JTextField();
-        txtPlazo.setBounds(320, 40, 100, 25);
+        txtPlazo.setBounds(480, 40, 100, 25);
         txtPlazo.setVisible(false);
         pnlEditarCuenta.add(txtPlazo);
 
@@ -147,13 +180,11 @@ public class FrmBanco extends JFrame {
         tblCuentas = new JTable();
         JScrollPane spListaCuentas = new JScrollPane(tblCuentas);
 
-        DefaultTableModel dtm = new DefaultTableModel(null, encabezadosCuentas);
-        tblCuentas.setModel(dtm);
+        CuentaServicio.mostrar(tblCuentas);
 
         // Agregar componentes
         pnlCuentas.add(pnlEditarCuenta);
         pnlCuentas.add(spListaCuentas);
-        
 
         // JScrollPane para permitir desplazamiento si es necesario
         JScrollPane spCuentas = new JScrollPane(pnlCuentas);
@@ -215,7 +246,7 @@ public class FrmBanco extends JFrame {
         tblTransacciones = new JTable();
         JScrollPane spListaTransacciones = new JScrollPane(tblTransacciones);
 
-        dtm = new DefaultTableModel(null, encabezadosTransacciones);
+        DefaultTableModel dtm = new DefaultTableModel(null, encabezadosTransacciones);
         tblTransacciones.setModel(dtm);
 
         // Agregar componentes
@@ -245,6 +276,15 @@ public class FrmBanco extends JFrame {
     }
 
     private void btnGuardarCuentaClick() {
+        TipoCuenta tipo = (TipoCuenta) cmbTipoCuenta.getSelectedItem();
+        var cuentaAgregada = CuentaServicio.agregar(tipo,
+                txtTitular.getText(),
+                txtNumero.getText(),
+                tipo == TipoCuenta.CORRIENTE ? Double.parseDouble(txtValor.getText()) : 0,
+                tipo == TipoCuenta.AHORROS || tipo == TipoCuenta.CREDITO ? Double.parseDouble(txtTasa.getText()) : 0,
+                tipo == TipoCuenta.CREDITO ? Double.parseDouble(txtValor.getText()) : 0,
+                tipo == TipoCuenta.CREDITO ? Integer.parseInt(txtPlazo.getText()) : 0);
+        CuentaServicio.mostrar(tblCuentas);
         pnlEditarCuenta.setVisible(false);
 
     }

@@ -2,41 +2,37 @@ package modelos;
 
 import java.text.DecimalFormat;
 
-public class Ahorro extends Cuenta {
+public class Corriente extends Cuenta {
 
-    private double tasaInteres;
+    private double sobregiro;
 
-    public Ahorro(String titular, String numero, double tasaInteres) {
+    public Corriente(String titular, String numero, double sobregiro) {
         super(titular, numero);
-        this.tasaInteres = tasaInteres;
+        this.sobregiro = sobregiro;
+    }
+
+    public double getSobregiro() {
+        return sobregiro;
     }
 
     @Override
     public boolean retirar(double valor) {
-        if (valor > 0 && valor <= getSaldo()) {
+        if (valor > 0 && valor <= getSaldo() + sobregiro) {
             setSaldo(getSaldo() - valor);
             return true;
         }
         return false;
     }
 
-    public double getTasaInteres() {
-        return tasaInteres;
-    }
-
-    public void abonarIntereses() {
-        setSaldo(getSaldo() * (1 + tasaInteres / 100));
-    }
-
     @Override
     public String[] getDatos() {
         DecimalFormat df = new DecimalFormat("#,##0.00");
         return new String[] {
-                "Ahorros",
+                "Corriente",
                 getNumero(),
                 getTitular(),
                 df.format(getSaldo()),
-                "Tasa de Interés " + df.format(tasaInteres) + "%"
+                "Sobregiro " + df.format(sobregiro)
         };
     }
 
