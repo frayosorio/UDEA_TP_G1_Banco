@@ -1,5 +1,12 @@
+import vistas.BancoVista;
+import controladores.BancoControlador;
+
 public class App {
     public static void main(String[] args) throws Exception {
-        new FrmBanco().setVisible(true);
+        var vista = new BancoVista();
+
+        new BancoControlador(vista);
+
+        vista.setVisible(true);
     }
 }

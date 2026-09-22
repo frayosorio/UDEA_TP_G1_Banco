@@ -11,9 +11,13 @@ import modelos.TipoCuenta;
 
 public class CuentaServicio {
 
-    private static String[] encabezados={"Titular", "Número", "Parámetros Producto", "Saldos"};
+    private static final String[] encabezados={"Titular", "Número", "Parámetros Producto", "Saldos"};
 
     private static List<Cuenta> cuentas = new ArrayList<>();
+
+    public static String[] getEncabezados() {
+        return encabezados;
+    }
 
     public static Cuenta agregar(TipoCuenta tipo,
             String titular,

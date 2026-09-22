@@ -1,3 +1,5 @@
+package vistas;
+
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -21,10 +23,8 @@ import javax.swing.table.DefaultTableModel;
 
 import modelos.TipoCuenta;
 
-public class FrmBanco extends JFrame {
+public class BancoVista extends JFrame {
 
-    public String[] encabezadosCuentas = new String[] { "Tipo", "Número", "Titular", "Saldo",
-            "Sobregiro o Límite" };
     public String[] encabezadosTransacciones = new String[] { "Cuenta", "Tipo", "ValorTransaccion", "Saldo" };
     private String[] opcionesTransaccion = new String[] { "Depósito", "Retiro" };
 
@@ -37,7 +37,7 @@ public class FrmBanco extends JFrame {
 
     JTabbedPane tp;
 
-    public FrmBanco() {
+    public BancoVista() {
         setSize(600, 400);
         setTitle("Cuentas Bancarias");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -182,9 +182,6 @@ public class FrmBanco extends JFrame {
         tblCuentas = new JTable();
         JScrollPane spListaCuentas = new JScrollPane(tblCuentas);
 
-        DefaultTableModel dtm = new DefaultTableModel(null, encabezadosCuentas);
-        tblCuentas.setModel(dtm);
-
         // Agregar componentes
         pnlCuentas.add(pnlEditarCuenta);
         pnlCuentas.add(spListaCuentas);
@@ -249,8 +246,8 @@ public class FrmBanco extends JFrame {
         tblTransacciones = new JTable();
         JScrollPane spListaTransacciones = new JScrollPane(tblTransacciones);
 
-        dtm = new DefaultTableModel(null, encabezadosTransacciones);
-        tblTransacciones.setModel(dtm);
+        // dtm = new DefaultTableModel(null, encabezadosTransacciones);
+        // tblTransacciones.setModel(dtm);
 
         // Agregar componentes
         pnlTransacciones.add(pnlEditarTransaccion);
@@ -266,6 +263,35 @@ public class FrmBanco extends JFrame {
 
         add(tbBanco, BorderLayout.NORTH);
         add(tp, BorderLayout.CENTER);
+    }
+
+    public JTextField getTxtNumero() {
+        return txtNumero;
+    }
+
+    public JTextField getTxtTitular() {
+        return txtTitular;
+    }
+
+    public JTextField getTxtTasaInteres() {
+        return txtTasaInteres;
+    }
+
+    public JTextField getTxtValor() {
+        return txtValor;
+    }
+
+    public JTextField getTxtPlazo() {
+        return txtPlazo;
+    }
+
+    public TipoCuenta getTipoCuentaSeleccionada(){
+     return (TipoCuenta)cmbTipoCuenta.getSelectedItem();   
+    }
+
+    public void mostrarCuentas(String[][] datos, String[] encabezados) {
+        DefaultTableModel dtm = new DefaultTableModel(datos, encabezados);
+        tblCuentas.setModel(dtm);
     }
 
     private void btnAgregarCuentaClick() {
