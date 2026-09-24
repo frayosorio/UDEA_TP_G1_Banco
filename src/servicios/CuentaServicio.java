@@ -11,7 +11,7 @@ import modelos.TipoCuenta;
 
 public class CuentaServicio {
 
-    private static final String[] encabezados={"Titular", "Número", "Parámetros Producto", "Saldos"};
+    private static final String[] encabezados = { "Tipo", "Titular", "Número", "Parámetros Producto", "Saldos" };
 
     private static List<Cuenta> cuentas = new ArrayList<>();
 
@@ -44,12 +44,20 @@ public class CuentaServicio {
         return cuenta;
     }
 
-    public static String[][] getDatos(){
-        String[][] datos=new String[cuentas.size()][encabezados.length];
-
+    public static String[][] getDatos() {
+        String[][] datos = new String[cuentas.size()][encabezados.length];
+        int fila = 0;
+        for (var cuenta : cuentas) {
+            int columna = 0;
+            for (var dato : cuenta.getDatos()) {
+                if (columna < encabezados.length) {
+                    datos[fila][columna] = dato;
+                }
+                columna++;
+            }
+            fila++;
+        }
         return datos;
     }
-
-    
 
 }

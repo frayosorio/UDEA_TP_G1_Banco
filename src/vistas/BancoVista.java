@@ -35,7 +35,8 @@ public class BancoVista extends JFrame {
     private JComboBox cmbTipoCuenta, cmbTipoTransaccion, cmbCuenta;
     private JLabel lblValor, lblPlazo, lblTasaInteres;
 
-    JTabbedPane tp;
+    private JTabbedPane tp;
+    private JButton btnGuardarCuenta;
 
     public BancoVista() {
         setSize(600, 400);
@@ -162,11 +163,8 @@ public class BancoVista extends JFrame {
         txtPlazo.setVisible(false);
         pnlEditarCuenta.add(txtPlazo);
 
-        JButton btnGuardarCuenta = new JButton("Guardar");
+        btnGuardarCuenta = new JButton("Guardar");
         btnGuardarCuenta.setBounds(220, 70, 100, 25);
-        btnGuardarCuenta.addActionListener(evt -> {
-            btnGuardarCuentaClick();
-        });
         pnlEditarCuenta.add(btnGuardarCuenta);
 
         JButton btnCancelarCuenta = new JButton("Cancelar");
@@ -265,28 +263,46 @@ public class BancoVista extends JFrame {
         add(tp, BorderLayout.CENTER);
     }
 
-    public JTextField getTxtNumero() {
-        return txtNumero;
+    // getters
+    public String getNumero() {
+        return txtNumero.getText();
     }
 
-    public JTextField getTxtTitular() {
-        return txtTitular;
+    public String getTitular() {
+        return txtTitular.getText();
     }
 
-    public JTextField getTxtTasaInteres() {
-        return txtTasaInteres;
+    public double getTasaInteres() {
+        try {
+            return Double.parseDouble(txtTasaInteres.getText());
+        } catch (Exception ex) {
+            return 0;
+        }
     }
 
-    public JTextField getTxtValor() {
-        return txtValor;
+    public double getValor() {
+        try {
+            return Double.parseDouble(txtValor.getText());
+        } catch (Exception ex) {
+            return 0;
+        }
     }
 
-    public JTextField getTxtPlazo() {
-        return txtPlazo;
+    public int getPlazo() {
+        try {
+            return Integer.parseInt(txtPlazo.getText());
+        } catch (Exception ex) {
+            return 0;
+        }
     }
 
-    public TipoCuenta getTipoCuentaSeleccionada(){
-     return (TipoCuenta)cmbTipoCuenta.getSelectedItem();   
+    public TipoCuenta getTipoCuentaSeleccionada() {
+        return (TipoCuenta) cmbTipoCuenta.getSelectedItem();
+    }
+
+    // setters
+    public void setGuardarCuentaClick(ActionListener escuchadorEvento) {
+        btnGuardarCuenta.addActionListener(escuchadorEvento);
     }
 
     public void mostrarCuentas(String[][] datos, String[] encabezados) {
@@ -304,14 +320,12 @@ public class BancoVista extends JFrame {
 
     }
 
-    private void btnGuardarCuentaClick() {
+    public void ocultarEdicionCuenta(){
         pnlEditarCuenta.setVisible(false);
-
     }
 
     private void btnCancelarCuentaClick() {
-        pnlEditarCuenta.setVisible(false);
-
+        ocultarEdicionCuenta();
     }
 
     private void btnTransaccionClick() {
