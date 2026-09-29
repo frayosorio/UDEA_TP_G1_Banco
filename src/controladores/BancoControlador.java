@@ -1,5 +1,6 @@
 package controladores;
 
+import servicios.TransaccionServicio;
 import vistas.BancoVista;
 
 import servicios.CuentaServicio;
@@ -12,11 +13,16 @@ public class BancoControlador {
     public BancoControlador(BancoVista vista) {
         this.vista = vista;
         this.vista.setGuardarCuentaClick(evento -> guardarCuenta());
+        this.vista.setEliminarCuentaClick(evento -> eliminarCuenta());
         mostrarCuentas();
     }
 
     private void mostrarCuentas() {
         vista.mostrarCuentas(CuentaServicio.getDatos(), CuentaServicio.getEncabezados());
+    }
+
+    private void mostrarTransacciones() {
+        vista.mostrarTransacciones(TransaccionServicio.getDatos(), TransaccionServicio.getEncabezados());
     }
 
     private void guardarCuenta() {
@@ -28,7 +34,9 @@ public class BancoControlador {
         var valorPrestado = tipo == TipoCuenta.CREDITO ? vista.getValor() : 0;
         var plazo = tipo == TipoCuenta.CREDITO ? vista.getPlazo() : 0;
 
-        CuentaServicio.agregar(tipo, titular, numero, tasa, sobregiro, plazo, valorPrestado);
+        var cuentaAgregada = CuentaServicio.agregar(tipo, titular, numero, tasa, sobregiro, plazo, valorPrestado);
+
+        vista.setCuentaTransaccion(cuentaAgregada.toString());
 
         mostrarCuentas();
 
@@ -36,4 +44,15 @@ public class BancoControlador {
 
     }
 
+    private void eliminarCuenta() {
+        if (vista.getFilaCuentaSeleccionada() >= 0) {
+            if (vista.confirmar("¿Está seguro de eliminar la cuenta?")) {
+                CuentaServicio.eliminar(vista.getFilaCuentaSeleccionada());
+                vista.quitarCuentaTransaccion(vista.getFilaCuentaSeleccionada());
+                mostrarCuentas();
+            }
+        } else {
+            vista.mostrarMensaje("Debe seleccionar una cuenta");
+        }
+    }
 }

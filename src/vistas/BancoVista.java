@@ -5,28 +5,12 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import modelos.TipoCuenta;
 
 public class BancoVista extends JFrame {
-
-    public String[] encabezadosTransacciones = new String[] { "Cuenta", "Tipo", "ValorTransaccion", "Saldo" };
-    private String[] opcionesTransaccion = new String[] { "Depósito", "Retiro" };
 
     private JTable tblCuentas, tblTransacciones;
     private JPanel pnlEditarCuenta, pnlEditarTransaccion;
@@ -36,7 +20,7 @@ public class BancoVista extends JFrame {
     private JLabel lblValor, lblPlazo, lblTasaInteres;
 
     private JTabbedPane tp;
-    private JButton btnGuardarCuenta;
+    private JButton btnGuardarCuenta, btnQuitarCuenta;
 
     public BancoVista() {
         setSize(600, 400);
@@ -53,12 +37,9 @@ public class BancoVista extends JFrame {
         });
         tbBanco.add(btnAgregarCuenta);
 
-        JButton btnQuitarCuenta = new JButton();
+        btnQuitarCuenta = new JButton();
         btnQuitarCuenta.setIcon(new ImageIcon(getClass().getResource("/iconos/QuitarCuenta.png")));
         btnQuitarCuenta.setToolTipText("Quitar Cuenta");
-        btnQuitarCuenta.addActionListener(evt -> {
-            btnQuitarCuentaClick();
-        });
         tbBanco.add(btnQuitarCuenta);
 
         JButton btnTransaccion = new JButton();
@@ -195,7 +176,7 @@ public class BancoVista extends JFrame {
         // Panel 1 (oculto por defecto)
         pnlEditarTransaccion = new JPanel();
         pnlEditarTransaccion.setPreferredSize(new Dimension(pnlEditarTransaccion.getWidth(), 100)); // Altura fija de
-                                                                                                    // 100px
+        // 100px
         pnlEditarTransaccion.setLayout(null);
 
         JLabel lblCuenta = new JLabel("Cuenta");
@@ -203,7 +184,7 @@ public class BancoVista extends JFrame {
         pnlEditarTransaccion.add(lblCuenta);
 
         cmbCuenta = new JComboBox();
-        cmbCuenta.setBounds(110, 10, 100, 25);
+        cmbCuenta.setBounds(110, 10, 400, 25);
         pnlEditarTransaccion.add(cmbCuenta);
 
         JLabel lblTipo = new JLabel("Tipo");
@@ -300,16 +281,51 @@ public class BancoVista extends JFrame {
         return (TipoCuenta) cmbTipoCuenta.getSelectedItem();
     }
 
+    public int getFilaCuentaSeleccionada() {
+        return tblCuentas.getSelectedRow();
+    }
+
     // setters
     public void setGuardarCuentaClick(ActionListener escuchadorEvento) {
         btnGuardarCuenta.addActionListener(escuchadorEvento);
     }
 
+    public void setEliminarCuentaClick(ActionListener escuchadorEvento) {
+        btnQuitarCuenta.addActionListener(escuchadorEvento);
+    }
+
+    public void setCuentaTransaccion(String informacionCuenta) {
+        cmbCuenta.addItem(informacionCuenta);
+    }
+
+    // metodos publicos
     public void mostrarCuentas(String[][] datos, String[] encabezados) {
         DefaultTableModel dtm = new DefaultTableModel(datos, encabezados);
         tblCuentas.setModel(dtm);
     }
 
+    public void mostrarTransacciones(String[][] datos, String[] encabezados) {
+        DefaultTableModel dtm = new DefaultTableModel(datos, encabezados);
+        tblTransacciones.setModel(dtm);
+    }
+
+    public void mostrarMensaje(String mensaje) {
+        JOptionPane.showMessageDialog(null, mensaje);
+    }
+
+    public boolean confirmar(String mensaje) {
+        return JOptionPane.showConfirmDialog(null, mensaje, "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+    }
+
+    public boolean quitarCuentaTransaccion(int posicion) {
+        if (posicion >= 0 && posicion < cmbCuenta.getItemCount()) {
+            cmbCuenta.removeItemAt(posicion);
+            return true;
+        }
+        return false;
+    }
+
+    // eventos
     private void btnAgregarCuentaClick() {
         pnlEditarCuenta.setVisible(true);
         tp.setSelectedIndex(0);
@@ -320,7 +336,7 @@ public class BancoVista extends JFrame {
 
     }
 
-    public void ocultarEdicionCuenta(){
+    public void ocultarEdicionCuenta() {
         pnlEditarCuenta.setVisible(false);
     }
 

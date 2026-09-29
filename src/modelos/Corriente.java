@@ -35,4 +35,9 @@ public class Corriente extends Cuenta {
                 "$ " + df.format(getSaldo())
         };
     }
+
+    @Override
+    public String toString(){
+        return "CORRIENTE #["+getNumero()+"] Titular["+getTitular()+"]";
+    }
 }

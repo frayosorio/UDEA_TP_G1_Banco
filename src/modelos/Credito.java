@@ -81,4 +81,8 @@ public class Credito extends Cuenta {
         };
     }
 
+    @Override
+    public String toString(){
+        return "CRÉDITO #["+getNumero()+"] Titular["+getTitular()+"]";
+    }
 }

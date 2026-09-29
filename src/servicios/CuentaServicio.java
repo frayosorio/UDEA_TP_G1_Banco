@@ -11,7 +11,7 @@ import modelos.TipoCuenta;
 
 public class CuentaServicio {
 
-    private static final String[] encabezados = { "Tipo", "Titular", "Número", "Parámetros Producto", "Saldos" };
+    private static final String[] encabezados = {"Tipo", "Titular", "Número", "Parámetros Producto", "Saldos"};
 
     private static List<Cuenta> cuentas = new ArrayList<>();
 
@@ -20,12 +20,12 @@ public class CuentaServicio {
     }
 
     public static Cuenta agregar(TipoCuenta tipo,
-            String titular,
-            String numero,
-            double tasaInteres,
-            double sobregiro,
-            int plazo,
-            double valorPrestado) {
+                                 String titular,
+                                 String numero,
+                                 double tasaInteres,
+                                 double sobregiro,
+                                 int plazo,
+                                 double valorPrestado) {
         Cuenta cuenta = null;
 
         switch (tipo) {
@@ -58,6 +58,14 @@ public class CuentaServicio {
             fila++;
         }
         return datos;
+    }
+
+    public static boolean eliminar(int posicion) {
+        if (posicion >= 0 && posicion < cuentas.size()) {
+            cuentas.remove(posicion);
+            return true;
+        }
+        return false;
     }
 
 }
