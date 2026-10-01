@@ -1,5 +1,7 @@
 package servicios;
 
+import modelos.Cuenta;
+import modelos.TipoTransaccion;
 import modelos.Transaccion;
 
 import java.util.ArrayList;
@@ -29,5 +31,14 @@ public class TransaccionServicio {
             fila++;
         }
         return datos;
+    }
+
+    public static Transaccion agregar(Cuenta cuenta, TipoTransaccion tipo, double valor) {
+        Transaccion transaccion = null;
+        if (cuenta.realizarTransaccion(tipo, valor)) {
+            transaccion = new Transaccion(cuenta, tipo, valor, cuenta.getSaldoTransaccion(tipo));
+            transacciones.add(transaccion);
+        }
+        return transaccion;
     }
 }

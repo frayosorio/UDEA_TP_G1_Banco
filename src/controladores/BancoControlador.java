@@ -14,7 +14,9 @@ public class BancoControlador {
         this.vista = vista;
         this.vista.setGuardarCuentaClick(evento -> guardarCuenta());
         this.vista.setEliminarCuentaClick(evento -> eliminarCuenta());
+        this.vista.setGuardarTransaccionClick(evento -> agregarTransaccion());
         mostrarCuentas();
+        mostrarTransacciones();
     }
 
     private void mostrarCuentas() {
@@ -35,13 +37,16 @@ public class BancoControlador {
         var plazo = tipo == TipoCuenta.CREDITO ? vista.getPlazo() : 0;
 
         var cuentaAgregada = CuentaServicio.agregar(tipo, titular, numero, tasa, sobregiro, plazo, valorPrestado);
+        if (cuentaAgregada != null) {
+            vista.setCuentaTransaccion(cuentaAgregada.toString());
 
-        vista.setCuentaTransaccion(cuentaAgregada.toString());
+            mostrarCuentas();
 
-        mostrarCuentas();
-
-        vista.ocultarEdicionCuenta();
-
+            vista.ocultarEdicionCuenta();
+        }
+        else{
+            vista.mostrarMensaje("No se puede agregar la cuenta");
+        }
     }
 
     private void eliminarCuenta() {
@@ -54,5 +59,23 @@ public class BancoControlador {
         } else {
             vista.mostrarMensaje("Debe seleccionar una cuenta");
         }
+    }
+
+    private void agregarTransaccion() {
+        var cuenta = CuentaServicio.get(vista.getFilaCuentaTransaccion());
+        if (cuenta == null) {
+            return;
+        }
+        var tipo = vista.getTipoTransaccionSeleccionado();
+        var valor = vista.getValorTransaccion();
+
+        var transaccionAgregada = TransaccionServicio.agregar(cuenta, tipo, valor);
+        if (transaccionAgregada != null) {
+            mostrarTransacciones();
+            vista.ocultarEdicionTransaccion();
+        } else {
+            vista.mostrarMensaje("No se puede realizar la transacción");
+        }
+
     }
 }

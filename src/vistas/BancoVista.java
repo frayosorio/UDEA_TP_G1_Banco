@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import modelos.TipoCuenta;
+import modelos.TipoTransaccion;
 
 public class BancoVista extends JFrame {
 
@@ -20,7 +21,7 @@ public class BancoVista extends JFrame {
     private JLabel lblValor, lblPlazo, lblTasaInteres;
 
     private JTabbedPane tp;
-    private JButton btnGuardarCuenta, btnQuitarCuenta;
+    private JButton btnGuardarCuenta, btnQuitarCuenta, btnGuardarTransaccion;
 
     public BancoVista() {
         setSize(600, 400);
@@ -193,7 +194,7 @@ public class BancoVista extends JFrame {
 
         cmbTipoTransaccion = new JComboBox();
         cmbTipoTransaccion.setBounds(110, 40, 100, 25);
-        DefaultComboBoxModel mdlTipoTransaccion = new DefaultComboBoxModel(opcionesTransaccion);
+        DefaultComboBoxModel mdlTipoTransaccion = new DefaultComboBoxModel(TipoTransaccion.values());
         cmbTipoTransaccion.setModel(mdlTipoTransaccion);
         pnlEditarTransaccion.add(cmbTipoTransaccion);
 
@@ -205,11 +206,8 @@ public class BancoVista extends JFrame {
         txtValorTransaccion.setBounds(110, 70, 100, 25);
         pnlEditarTransaccion.add(txtValorTransaccion);
 
-        JButton btnGuardarTransaccion = new JButton("Guardar");
+        btnGuardarTransaccion = new JButton("Guardar");
         btnGuardarTransaccion.setBounds(220, 70, 100, 25);
-        btnGuardarTransaccion.addActionListener(evt -> {
-            btnGuardarTransaccionClick();
-        });
         pnlEditarTransaccion.add(btnGuardarTransaccion);
 
         JButton btnCancelarTransaccion = new JButton("Cancelar");
@@ -224,9 +222,6 @@ public class BancoVista extends JFrame {
         // Panel 2 (siempre visible)
         tblTransacciones = new JTable();
         JScrollPane spListaTransacciones = new JScrollPane(tblTransacciones);
-
-        // dtm = new DefaultTableModel(null, encabezadosTransacciones);
-        // tblTransacciones.setModel(dtm);
 
         // Agregar componentes
         pnlTransacciones.add(pnlEditarTransaccion);
@@ -285,6 +280,22 @@ public class BancoVista extends JFrame {
         return tblCuentas.getSelectedRow();
     }
 
+    public int getFilaCuentaTransaccion() {
+        return cmbCuenta.getSelectedIndex();
+    }
+
+    public TipoTransaccion getTipoTransaccionSeleccionado() {
+        return (TipoTransaccion) cmbTipoTransaccion.getSelectedItem();
+    }
+
+    public double getValorTransaccion() {
+        try {
+            return Double.parseDouble(txtValorTransaccion.getText());
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
     // setters
     public void setGuardarCuentaClick(ActionListener escuchadorEvento) {
         btnGuardarCuenta.addActionListener(escuchadorEvento);
@@ -296,6 +307,10 @@ public class BancoVista extends JFrame {
 
     public void setCuentaTransaccion(String informacionCuenta) {
         cmbCuenta.addItem(informacionCuenta);
+    }
+
+    public void setGuardarTransaccionClick(ActionListener escuchadorEvento) {
+        btnGuardarTransaccion.addActionListener(escuchadorEvento);
     }
 
     // metodos publicos
@@ -325,19 +340,19 @@ public class BancoVista extends JFrame {
         return false;
     }
 
+    public void ocultarEdicionCuenta() {
+        pnlEditarCuenta.setVisible(false);
+    }
+
+    public void ocultarEdicionTransaccion() {
+        pnlEditarTransaccion.setVisible(false);
+    }
+
     // eventos
     private void btnAgregarCuentaClick() {
         pnlEditarCuenta.setVisible(true);
         tp.setSelectedIndex(0);
 
-    }
-
-    private void btnQuitarCuentaClick() {
-
-    }
-
-    public void ocultarEdicionCuenta() {
-        pnlEditarCuenta.setVisible(false);
     }
 
     private void btnCancelarCuentaClick() {
@@ -347,16 +362,10 @@ public class BancoVista extends JFrame {
     private void btnTransaccionClick() {
         pnlEditarTransaccion.setVisible(true);
         tp.setSelectedIndex(1);
-
-    }
-
-    private void btnGuardarTransaccionClick() {
-        pnlEditarTransaccion.setVisible(false);
-
     }
 
     private void btnCancelarTransaccionClick() {
-        pnlEditarTransaccion.setVisible(false);
+        ocultarEdicionTransaccion();
     }
 
 }

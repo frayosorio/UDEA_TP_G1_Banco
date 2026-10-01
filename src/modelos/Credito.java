@@ -10,7 +10,7 @@ public class Credito extends Cuenta {
     private double valorRetirado;
 
     public Credito(String numero, String titular,
-            double valorPrestado, double tasaInteres, int plazo) {
+                   double valorPrestado, double tasaInteres, int plazo) {
         super(numero, titular);
         this.valorPrestado = valorPrestado;
         this.tasaInteres = tasaInteres;
@@ -43,7 +43,7 @@ public class Credito extends Cuenta {
     }
 
     public double getCuota() {
-        double tasa =tasaInteres / 100;
+        double tasa = tasaInteres / 100;
         double factor = Math.pow(1 + tasa, plazo);
         return valorPrestado * factor * tasa / (factor - 1);
     }
@@ -62,7 +62,7 @@ public class Credito extends Cuenta {
             var intereses = getSaldoDeuda() * tasaInteres / 100;
             var abonoCapital = valor - intereses;
             if (abonoCapital <= getSaldoDeuda()) {
-                return depositar(valor);
+                return depositar(abonoCapital);
             }
         }
         return false;
@@ -71,18 +71,34 @@ public class Credito extends Cuenta {
     @Override
     public String[] getDatos() {
         DecimalFormat df = new DecimalFormat("#,##0.00");
-        return new String[] {
+        return new String[]{
                 "CREDITO",
                 getTitular(),
                 getNumero(),
                 "Valor Préstamo $" + df.format(valorPrestado) + " Tasa Interés " + df.format(tasaInteres) + "% Plazo "
                         + plazo + " Cuota $" + df.format(getCuota()),
-                "Saldo Adeudado $ " + df.format(getSaldoDeuda())+" Saldo Retiro $ " + df.format(getSaldoRetiro())
+                "Saldo Adeudado $ " + df.format(getSaldoDeuda()) + " Saldo Retiro $ " + df.format(getSaldoRetiro())
         };
     }
 
     @Override
-    public String toString(){
-        return "CRÉDITO #["+getNumero()+"] Titular["+getTitular()+"]";
+    public boolean realizarTransaccion(TipoTransaccion tipo, double valor) {
+        switch (tipo) {
+            case DEPOSITO:
+                return pagar(valor);
+            case RETIRO:
+                return retirar(valor);
+        }
+        return false;
+    }
+
+    @Override
+    public double getSaldoTransaccion(TipoTransaccion tipo) {
+        return tipo == TipoTransaccion.DEPOSITO ? getSaldoDeuda() : getSaldoRetiro();
+    }
+
+    @Override
+    public String toString() {
+        return "CRÉDITO #[" + getNumero() + "] Titular[" + getTitular() + "]";
     }
 }

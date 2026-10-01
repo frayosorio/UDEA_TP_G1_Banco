@@ -33,12 +33,18 @@ public abstract class Cuenta {
 
     public abstract boolean retirar(double valor);
 
+    public abstract boolean realizarTransaccion(TipoTransaccion tipo, double valor);
+
     public boolean depositar(double valor) {
         if (valor > 0) {
             setSaldo(saldo + valor);
             return true;
         }
         return false;
+    }
+
+    public double getSaldoTransaccion(TipoTransaccion tipo){
+        return saldo;
     }
 
     public abstract String[] getDatos();

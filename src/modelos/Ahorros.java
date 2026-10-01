@@ -24,6 +24,17 @@ public class Ahorros extends Cuenta {
         return false;
     }
 
+    @Override
+    public boolean realizarTransaccion(TipoTransaccion tipo, double valor) {
+        switch (tipo) {
+            case DEPOSITO:
+                return depositar(valor);
+            case RETIRO:
+                return retirar(valor);
+        }
+        return false;
+    }
+
     public void abonarIntereses() {
         setSaldo(getSaldo() * (1 + tasa));
     }
@@ -31,7 +42,7 @@ public class Ahorros extends Cuenta {
     @Override
     public String[] getDatos() {
         DecimalFormat df = new DecimalFormat("#,##0.00");
-        return new String[] {
+        return new String[]{
                 "AHORROS",
                 getTitular(),
                 getNumero(),
@@ -41,8 +52,8 @@ public class Ahorros extends Cuenta {
     }
 
     @Override
-    public String toString(){
-        return "AHORRO #["+getNumero()+"] Titular["+getTitular()+"]";
+    public String toString() {
+        return "AHORRO #[" + getNumero() + "] Titular[" + getTitular() + "]";
     }
 
 }
