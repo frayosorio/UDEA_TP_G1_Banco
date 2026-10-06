@@ -1,5 +1,6 @@
 package controladores;
 
+import modelos.DatosCuenta;
 import servicios.TransaccionServicio;
 import vistas.BancoVista;
 
@@ -36,15 +37,15 @@ public class BancoControlador {
         var valorPrestado = tipo == TipoCuenta.CREDITO ? vista.getValor() : 0;
         var plazo = tipo == TipoCuenta.CREDITO ? vista.getPlazo() : 0;
 
-        var cuentaAgregada = CuentaServicio.agregar(tipo, titular, numero, tasa, sobregiro, plazo, valorPrestado);
+        var cuentaAgregada = CuentaServicio.agregar(tipo,
+                new DatosCuenta(titular, numero, tasa, sobregiro, plazo, valorPrestado));
         if (cuentaAgregada != null) {
             vista.setCuentaTransaccion(cuentaAgregada.toString());
 
             mostrarCuentas();
 
             vista.ocultarEdicionCuenta();
-        }
-        else{
+        } else {
             vista.mostrarMensaje("No se puede agregar la cuenta");
         }
     }

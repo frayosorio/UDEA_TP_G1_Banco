@@ -3,11 +3,8 @@ package servicios;
 import java.util.ArrayList;
 import java.util.List;
 
-import modelos.Ahorros;
-import modelos.Corriente;
-import modelos.Credito;
-import modelos.Cuenta;
-import modelos.TipoCuenta;
+import fabricas.CuentaFactory;
+import modelos.*;
 
 public class CuentaServicio {
 
@@ -27,25 +24,8 @@ public class CuentaServicio {
     }
 
     public static Cuenta agregar(TipoCuenta tipo,
-                                 String titular,
-                                 String numero,
-                                 double tasaInteres,
-                                 double sobregiro,
-                                 int plazo,
-                                 double valorPrestado) {
-        Cuenta cuenta = null;
-
-        switch (tipo) {
-            case AHORROS:
-                cuenta = new Ahorros(numero, titular, tasaInteres);
-                break;
-            case CORRIENTE:
-                cuenta = new Corriente(numero, titular, sobregiro);
-                break;
-            case CREDITO:
-                cuenta = new Credito(numero, titular, valorPrestado, tasaInteres, plazo);
-                break;
-        }
+                                 DatosCuenta datos) {
+        var cuenta= CuentaFactory.getFactory(tipo).crearCuenta(datos);
         if (cuenta != null)
             cuentas.add(cuenta);
         return cuenta;
